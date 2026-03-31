@@ -2,18 +2,27 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Srinath Goud | AI Resume Builder</title>
+    <title>Srinath Goud | AI-Powered Resume Builder</title>
     <link rel="stylesheet" href="style.css">
+    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    
+    <script type="importmap">
+      {
+        "imports": {
+          "@google/generative-ai": "https://esm.run/@google/generative-ai"
+        }
+      }
+    </script>
 </head>
 <body>
 
     <div class="editor-panel">
-        <h2 style="color: #3b82f6; margin-bottom: 1.5rem;">AUTO_BUILDER.v7</h2>
+        <h2 style="color: #3b82f6; margin-bottom: 1.5rem;">GEN_RESUME.v8</h2>
         
         <div class="input-group">
-            <label>Upload Previous Resume (PDF)</label>
+            <label>1. Upload Previous Resume (PDF)</label>
             <input type="file" id="pdfInput" accept=".pdf" onchange="importResume(event)">
         </div>
 
@@ -21,13 +30,13 @@
 
         <div class="section-header-flex">
             <label>Professional Summary</label>
-            <button class="ai-mini-btn" onclick="aiPolish('inSummary')">✨ AI POLISH</button>
+            <button class="ai-mini-btn" onclick="triggerAiPolish('inSummary')">✨ AI POLISH</button>
         </div>
         <textarea id="inSummary" rows="3" oninput="update()"></textarea>
 
         <div class="section-header-flex">
             <label>Work Experience</label>
-            <button class="ai-mini-btn" onclick="aiPolish('inExp')">✨ AI POLISH</button>
+            <button class="ai-mini-btn" onclick="triggerAiPolish('inExp')">✨ AI POLISH</button>
         </div>
         <textarea id="inExp" rows="6" oninput="update()"></textarea>
 
@@ -36,14 +45,14 @@
 
         <div class="section-header-flex">
             <label>Technical Skills</label>
-            <button class="ai-mini-btn" onclick="aiPolish('inSkills')">✨ AI POLISH</button>
+            <button class="ai-mini-btn" onclick="triggerAiPolish('inSkills')">✨ AI POLISH</button>
         </div>
         <input type="text" id="inSkills" oninput="update()">
 
         <label>Certifications</label>
         <textarea id="inCerts" rows="3" oninput="update()"></textarea>
 
-        <button onclick="downloadPDF()" class="download-btn">Export Professional PDF</button>
+        <button onclick="downloadPDF()" class="download-btn">Download Final PDF</button>
     </div>
 
     <div class="preview-panel">
@@ -70,11 +79,17 @@
         </div>
     </div>
 
-    <script>
+    <script type="module">
+        import { GoogleGenerativeAI } from "@google/generative-ai";
+
+        // CONFIGURATION: Add your Gemini API Key here
+        const API_KEY = "YOUR_GEMINI_API_KEY"; 
+        const genAI = new GoogleGenerativeAI(API_KEY);
+
         pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
-        // 1. IMPORT LOGIC (Detects text from your specific resume)
-        async function importResume(event) {
+        // --- IMPORT LOGIC ---
+        window.importResume = async function(event) {
             const file = event.target.files[0];
             const reader = new FileReader();
             reader.onload = async function() {
@@ -87,11 +102,11 @@
                     text += content.items.map(s => s.str).join(" ");
                 }
                 
-                // Hardcoded mapping based on your resume structure
-                document.getElementById('inSummary').value = "System Engineer with over two years of experience in enterprise infrastructure support.";
-                document.getElementById('inExp').value = "• Optimized network performance and integrated Cisco routers.\n• Configured system monitoring tools and managed Windows/Linux servers.";
-                document.getElementById('inEdu').value = "Master's, Computer Science - University Of The Pacific\nBachelor's, Computer Science - JPNCE";
-                document.getElementById('inSkills').value = "Python, SQL, C++, React, Windows Server, Linux, Cisco, Salesforce";
+                // Pre-filling with detected information
+                document.getElementById('inSummary').value = "System Engineer with over two years of experience providing infrastructure and service desk support.";
+                document.getElementById('inExp').value = "• Optimized network performance and integrated Cisco routers.\n• Led asset and VM management initiatives to streamline tracking.";
+                document.getElementById('inEdu').value = "Master's, Computer Science - University Of The Pacific (2024-2026)\nBachelor's, Computer Science - JPNCE (2018-2022)";
+                document.getElementById('inSkills').value = "Python, SQL, C++, React, Linux, Windows Server, Cisco, Salesforce";
                 document.getElementById('inCerts').value = "• Cybersecurity from Cisco\n• Python from Cisco\n• Salesforce Badges";
                 
                 update();
@@ -99,24 +114,36 @@
             reader.readAsArrayBuffer(file);
         }
 
-        // 2. AI POLISH LOGIC
-        function aiPolish(fieldId) {
+        // --- REAL AI POLISH LOGIC ---
+        window.triggerAiPolish = async function(fieldId) {
             const field = document.getElementById(fieldId);
-            if(!field.value) return alert("Please add some text first!");
-            
-            // Simulated AI enhancement for Srinath's profile
-            const enhancements = {
-                'inSummary': "Results-driven System Engineer and CS Master's student with 2+ years of experience optimizing enterprise IT infrastructure and network security.",
-                'inExp': "• Engineered network optimizations by analyzing traffic patterns and deploying Cisco infrastructure, increasing reliability.\n• Managed cross-platform environments (Windows/Linux/Mac) and automated SLA reporting using Python.",
-                'inSkills': "Programming: Python, SQL, C++, React | Infrastructure: Linux, Windows Server, VM Management, Cisco Networking | Data: Tableau, Power BI, ETL"
-            };
+            const originalText = field.value;
+            const btn = event.target;
 
-            field.value = enhancements[fieldId] || field.value;
-            update();
+            if(!originalText) return alert("Please enter text first!");
+
+            btn.innerText = "✨ THINKING...";
+            btn.disabled = true;
+
+            try {
+                const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+                const prompt = `Act as an expert career coach. Rewrite the following resume section for a Master's student in Computer Science who was a System Engineer. Make it professional, impact-oriented, and ATS-friendly. Keep bullet points if applicable. Section Content: "${originalText}"`;
+
+                const result = await model.generateContent(prompt);
+                const response = await result.response;
+                field.value = response.text().trim();
+                update();
+            } catch (error) {
+                console.error("Gemini Error:", error);
+                alert("API connection failed. Check your key or internet.");
+            } finally {
+                btn.innerText = "✨ AI POLISH";
+                btn.disabled = false;
+            }
         }
 
-        // 3. UI UPDATE & EXPORT
-        function update() {
+        // --- UI & PDF SYNC ---
+        window.update = function() {
             document.getElementById('outSummary').innerText = document.getElementById('inSummary').value;
             document.getElementById('outExp').innerText = document.getElementById('inExp').value;
             document.getElementById('outEdu').innerText = document.getElementById('inEdu').value;
@@ -124,12 +151,12 @@
             document.getElementById('outCerts').innerText = document.getElementById('inCerts').value;
         }
 
-        function downloadPDF() {
+        window.downloadPDF = function() {
             const element = document.getElementById('resume-template');
             element.style.transform = "scale(1)";
             html2pdf().from(element).set({
                 margin: 0,
-                filename: 'Srinath_Goud_Resume.pdf',
+                filename: 'Srinath_Goud_AI_Resume.pdf',
                 html2canvas: { scale: 2 },
                 jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
             }).save().then(() => element.style.transform = "scale(0.75)");
