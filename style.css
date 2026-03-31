@@ -32,20 +32,28 @@ label {
     letter-spacing: 0.05em;
 }
 
-/* AI BUTTON STYLE */
+/* AI POLISH BUTTON */
 .ai-mini-btn {
-    background: #4f46e5;
+    background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
     color: white;
-    font-size: 0.6rem;
-    padding: 3px 8px;
-    border-radius: 4px;
+    font-size: 0.65rem;
+    padding: 4px 10px;
+    border-radius: 6px;
     border: none;
     cursor: pointer;
     font-weight: bold;
-    transition: 0.2s;
+    transition: all 0.2s ease;
 }
 
-.ai-mini-btn:hover { background: #6366f1; }
+.ai-mini-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.4);
+}
+
+.ai-mini-btn:disabled {
+    background: #475569;
+    cursor: not-allowed;
+}
 
 input, textarea {
     background-color: #1e293b;
@@ -59,7 +67,7 @@ input, textarea {
     margin-bottom: 1rem;
 }
 
-/* --- PREVIEW PANEL --- */
+/* --- RESUME PREVIEW (A4) --- */
 .preview-panel {
     width: 60%;
     background-color: #020617;
@@ -88,7 +96,7 @@ input, textarea {
 .download-btn {
     background: #10b981;
     color: white;
-    padding: 12px;
+    padding: 14px;
     border-radius: 8px;
     font-weight: 700;
     cursor: pointer;
