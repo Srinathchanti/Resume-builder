@@ -1,6 +1,6 @@
-/* --- GLOBAL STYLING --- */
+/* --- APP CORE --- */
 body {
-    background-color: #0f172a;
+    background-color: #0f172a; /* Slate 900 */
     font-family: 'Inter', sans-serif;
     margin: 0;
     display: flex;
@@ -8,7 +8,7 @@ body {
     overflow: hidden;
 }
 
-/* --- EDITOR PANEL --- */
+/* --- LEFT SIDE: EDITOR --- */
 .editor-panel {
     width: 40%;
     padding: 2rem;
@@ -28,9 +28,10 @@ label {
     font-weight: 800;
     text-transform: uppercase;
     color: #60a5fa;
+    letter-spacing: 0.05em;
 }
 
-/* AI BUTTONS */
+/* AI POLISH BUTTONS */
 .ai-mini-btn {
     background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
     color: white;
@@ -51,14 +52,14 @@ input, textarea {
     background-color: #1e293b;
     border: 1px solid #334155;
     color: white;
-    padding: 0.75rem;
+    padding: 0.8rem;
     border-radius: 0.5rem;
     width: 100%;
     outline: none;
-    margin-bottom: 1rem;
+    margin-bottom: 1.2rem;
 }
 
-/* --- PREVIEW PANEL (A4) --- */
+/* --- RIGHT SIDE: PREVIEW (A4) --- */
 .preview-panel {
     width: 60%;
     background-color: #020617;
@@ -73,13 +74,25 @@ input, textarea {
     min-height: 297mm;
     background: white;
     color: #111827;
-    padding: 15mm 20mm;
+    padding: 20mm;
     box-shadow: 0 25px 50px rgba(0,0,0,0.5);
     transform: scale(0.75); 
     transform-origin: top center;
 }
 
+/* RESUME TYPOGRAPHY */
 .resume-name { font-size: 2.2rem; font-weight: 900; text-align: center; margin: 0; text-transform: uppercase; }
 .resume-contact { text-align: center; font-size: 0.85rem; color: #4b5563; margin-bottom: 1rem; border-bottom: 2px solid #000; padding-bottom: 10px; }
 .section-title { font-size: 1rem; font-weight: 800; border-bottom: 1.5px solid #111827; margin-top: 1.2rem; margin-bottom: 0.4rem; text-transform: uppercase; }
 .resume-text { font-size: 0.88rem; line-height: 1.5; margin: 0; }
+
+.download-btn {
+    background: #10b981;
+    color: white;
+    padding: 14px;
+    border-radius: 8px;
+    font-weight: 700;
+    cursor: pointer;
+    border: none;
+    width: 100%;
+}
