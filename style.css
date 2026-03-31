@@ -14,24 +14,41 @@ body {
     border-right: 1px solid #334155;
 }
 
+.section-header-flex {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
 label {
     font-size: 0.7rem;
     font-weight: 800;
     text-transform: uppercase;
     color: #60a5fa;
-    margin-bottom: 0.5rem;
-    display: block;
+}
+
+.ai-mini-btn {
+    background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+    color: white;
+    font-size: 0.65rem;
+    padding: 4px 10px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
 }
 
 input, textarea {
     background-color: #1e293b;
     border: 1px solid #334155;
     color: white;
-    padding: 0.8rem;
+    padding: 0.7rem;
     border-radius: 0.5rem;
     width: 100%;
     outline: none;
-    margin-bottom: 1.2rem;
+    margin-bottom: 1rem;
+    font-size: 0.85rem;
 }
 
 .preview-panel {
@@ -40,7 +57,7 @@ input, textarea {
     display: flex;
     justify-content: center;
     overflow-y: auto;
-    padding: 40px 0;
+    padding: 20px 0;
 }
 
 #resume-template {
@@ -54,15 +71,15 @@ input, textarea {
     transform-origin: top center;
 }
 
-.resume-name { font-size: 2.2rem; font-weight: 900; text-align: center; margin: 0; text-transform: uppercase; }
-.resume-contact { text-align: center; font-size: 0.85rem; color: #4b5563; margin-bottom: 1.5rem; border-bottom: 2px solid #000; padding-bottom: 10px; }
-.section-title { font-size: 1rem; font-weight: 800; border-bottom: 1.5px solid #111827; margin-top: 1.5rem; margin-bottom: 0.5rem; text-transform: uppercase; }
-.resume-text { font-size: 0.9rem; line-height: 1.5; margin: 0; }
+.resume-name { font-size: 2rem; font-weight: 900; text-align: center; margin: 0; text-transform: uppercase; }
+.resume-contact { text-align: center; font-size: 0.8rem; color: #4b5563; margin-bottom: 1rem; border-bottom: 2px solid #000; padding-bottom: 8px; }
+.section-title { font-size: 1rem; font-weight: 800; border-bottom: 1.5px solid #111827; margin-top: 1.2rem; margin-bottom: 0.4rem; text-transform: uppercase; }
+.resume-text { font-size: 0.88rem; line-height: 1.4; margin: 0; }
 
 .download-btn {
     background: #10b981;
     color: white;
-    padding: 14px;
+    padding: 12px;
     border-radius: 8px;
     font-weight: 700;
     cursor: pointer;
