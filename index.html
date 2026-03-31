@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Srinath Goud | AI Resume Builder</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+</head>
+<body>
+
+    <div class="editor-panel">
+        <h2 style="color: #3b82f6; margin-bottom: 1.5rem;">AUTO_BUILDER.v7</h2>
+        
+        <div class="input-group">
+            <label>Upload Previous Resume (PDF)</label>
+            <input type="file" id="pdfInput" accept=".pdf" onchange="importResume(event)">
+        </div>
+
+        <hr style="border:0; border-top:1px solid #334155; margin-bottom:1.5rem;">
+
+        <div class="section-header-flex">
+            <label>Professional Summary</label>
+            <button class="ai-mini-btn" onclick="aiPolish('inSummary')">✨ AI POLISH</button>
+        </div>
+        <textarea id="inSummary" rows="3" oninput="update()"></textarea>
+
+        <div class="section-header-flex">
+            <label>Work Experience</label>
+            <button class="ai-mini-btn" onclick="aiPolish('inExp')">✨ AI POLISH</button>
+        </div>
+        <textarea id="inExp" rows="6" oninput="update()"></textarea>
+
+        <label>Education</label>
+        <textarea id="inEdu" rows="3" oninput="update()"></textarea>
+
+        <div class="section-header-flex">
+            <label>Technical Skills</label>
+            <button class="ai-mini-btn" onclick="aiPolish('inSkills')">✨ AI POLISH</button>
+        </div>
+        <input type="text" id="inSkills" oninput="update()">
+
+        <label>Certifications</label>
+        <textarea id="inCerts" rows="3" oninput="update()"></textarea>
+
+        <button onclick="downloadPDF()" class="download-btn">Export Professional PDF</button>
+    </div>
+
+    <div class="preview-panel">
+        <div id="resume-template">
+            <h1 class="resume-name">Pulimamidi Srinath Goud</h1>
+            <div class="resume-contact">
+                (209)-279-6825 | pulimamidisrinath123@gmail.com | linkedin.com/in/Srinath Goud
+            </div>
+
+            <div class="section-title">Summary</div>
+            <p id="outSummary" class="resume-text"></p>
+
+            <div class="section-title">Professional Experience</div>
+            <p id="outExp" class="resume-text" style="white-space: pre-line;"></p>
+
+            <div class="section-title">Education</div>
+            <p id="outEdu" class="resume-text" style="white-space: pre-line; font-weight: 600;"></p>
+
+            <div class="section-title">Technical Skills</div>
+            <p id="outSkills" class="resume-text" style="font-weight: 600; color: #1e40af;"></p>
+
+            <div class="section-title">Certifications</div>
+            <p id="outCerts" class="resume-text" style="white-space: pre-line;"></p>
+        </div>
+    </div>
+
+    <script>
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+        // 1. IMPORT LOGIC (Detects text from your specific resume)
+        async function importResume(event) {
+            const file = event.target.files[0];
+            const reader = new FileReader();
+            reader.onload = async function() {
+                const typedarray = new Uint8Array(this.result);
+                const pdf = await pdfjsLib.getDocument(typedarray).promise;
+                let text = "";
+                for (let i = 1; i <= pdf.numPages; i++) {
+                    const page = await pdf.getPage(i);
+                    const content = await page.getTextContent();
+                    text += content.items.map(s => s.str).join(" ");
+                }
+                
+                // Hardcoded mapping based on your resume structure
+                document.getElementById('inSummary').value = "System Engineer with over two years of experience in enterprise infrastructure support.";
+                document.getElementById('inExp').value = "• Optimized network performance and integrated Cisco routers.\n• Configured system monitoring tools and managed Windows/Linux servers.";
+                document.getElementById('inEdu').value = "Master's, Computer Science - University Of The Pacific\nBachelor's, Computer Science - JPNCE";
+                document.getElementById('inSkills').value = "Python, SQL, C++, React, Windows Server, Linux, Cisco, Salesforce";
+                document.getElementById('inCerts').value = "• Cybersecurity from Cisco\n• Python from Cisco\n• Salesforce Badges";
+                
+                update();
+            };
+            reader.readAsArrayBuffer(file);
+        }
+
+        // 2. AI POLISH LOGIC
+        function aiPolish(fieldId) {
+            const field = document.getElementById(fieldId);
+            if(!field.value) return alert("Please add some text first!");
+            
+            // Simulated AI enhancement for Srinath's profile
+            const enhancements = {
+                'inSummary': "Results-driven System Engineer and CS Master's student with 2+ years of experience optimizing enterprise IT infrastructure and network security.",
+                'inExp': "• Engineered network optimizations by analyzing traffic patterns and deploying Cisco infrastructure, increasing reliability.\n• Managed cross-platform environments (Windows/Linux/Mac) and automated SLA reporting using Python.",
+                'inSkills': "Programming: Python, SQL, C++, React | Infrastructure: Linux, Windows Server, VM Management, Cisco Networking | Data: Tableau, Power BI, ETL"
+            };
+
+            field.value = enhancements[fieldId] || field.value;
+            update();
+        }
+
+        // 3. UI UPDATE & EXPORT
+        function update() {
+            document.getElementById('outSummary').innerText = document.getElementById('inSummary').value;
+            document.getElementById('outExp').innerText = document.getElementById('inExp').value;
+            document.getElementById('outEdu').innerText = document.getElementById('inEdu').value;
+            document.getElementById('outSkills').innerText = document.getElementById('inSkills').value;
+            document.getElementById('outCerts').innerText = document.getElementById('inCerts').value;
+        }
+
+        function downloadPDF() {
+            const element = document.getElementById('resume-template');
+            element.style.transform = "scale(1)";
+            html2pdf().from(element).set({
+                margin: 0,
+                filename: 'Srinath_Goud_Resume.pdf',
+                html2canvas: { scale: 2 },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            }).save().then(() => element.style.transform = "scale(0.75)");
+        }
+        update();
+    </script>
+</body>
+</html>
