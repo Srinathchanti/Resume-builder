@@ -1,3 +1,4 @@
+/* General App Styling */
 body {
     background-color: #0f172a;
     font-family: 'Inter', sans-serif;
@@ -7,63 +8,62 @@ body {
     overflow: hidden;
 }
 
-/* --- EDITOR --- */
+/* Editor Panel */
 .editor-panel {
-    width: 42%;
-    padding: 2.5rem;
+    width: 40%;
+    padding: 2rem;
     overflow-y: auto;
     border-right: 1px solid #334155;
-    background-color: #111b2d;
+    background-color: #0f172a;
 }
 
-.section-header {
+.section-header-flex {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 0.6rem;
+    margin-bottom: 0.5rem;
 }
 
 label {
-    font-size: 0.75rem;
+    font-size: 0.7rem;
     font-weight: 800;
     text-transform: uppercase;
-    color: #38bdf8;
+    color: #60a5fa;
     letter-spacing: 0.05em;
 }
 
-/* AI POLISH BUTTON */
-.ai-btn {
-    background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+/* API Polish Button */
+.ai-mini-btn {
+    background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
     color: white;
-    font-size: 0.7rem;
-    padding: 5px 12px;
+    font-size: 0.65rem;
+    padding: 4px 10px;
     border-radius: 6px;
     border: none;
     cursor: pointer;
-    font-weight: 700;
-    transition: transform 0.2s;
+    font-weight: bold;
 }
 
-.ai-btn:hover {
-    transform: scale(1.05);
-    box-shadow: 0 0 15px rgba(124, 58, 237, 0.4);
+.ai-mini-btn:disabled {
+    background: #475569;
+    cursor: not-allowed;
 }
 
-textarea, input {
+input, textarea {
     background-color: #1e293b;
     border: 1px solid #334155;
-    color: #f1f5f9;
-    padding: 0.8rem;
+    color: white;
+    padding: 0.75rem;
     border-radius: 0.5rem;
     width: 100%;
     outline: none;
     font-size: 0.9rem;
-    margin-bottom: 1.2rem;
+    margin-bottom: 1rem;
 }
 
-/* --- PREVIEW --- */
+/* Preview Panel */
 .preview-panel {
-    width: 58%;
+    width: 60%;
     background-color: #020617;
     display: flex;
     justify-content: center;
@@ -76,13 +76,24 @@ textarea, input {
     min-height: 297mm;
     background: white;
     color: #111827;
-    padding: 20mm;
+    padding: 15mm 20mm;
     box-shadow: 0 25px 50px rgba(0,0,0,0.5);
     transform: scale(0.75); 
     transform-origin: top center;
 }
 
-.resume-name { font-size: 2.4rem; font-weight: 900; text-align: center; margin: 0; color: #000; }
-.resume-contact { text-align: center; font-size: 0.85rem; color: #4b5563; margin-bottom: 1.5rem; border-bottom: 2px solid #000; padding-bottom: 10px; }
-.section-title { font-size: 1.1rem; font-weight: 800; border-bottom: 1.5px solid #000; margin-top: 1.5rem; margin-bottom: 0.6rem; text-transform: uppercase; color: #000; }
-.resume-text { font-size: 0.92rem; line-height: 1.6; margin: 0; color: #1f2937; }
+.resume-name { font-size: 2.2rem; font-weight: 900; text-align: center; margin: 0; text-transform: uppercase; }
+.resume-contact { text-align: center; font-size: 0.85rem; color: #4b5563; margin-bottom: 1rem; border-bottom: 2px solid #000; padding-bottom: 10px; }
+.section-title { font-size: 1rem; font-weight: 800; border-bottom: 1.5px solid #111827; margin-top: 1.2rem; margin-bottom: 0.4rem; text-transform: uppercase; }
+.resume-text { font-size: 0.88rem; line-height: 1.4; margin: 0; }
+
+.download-btn {
+    background: #10b981;
+    color: white;
+    padding: 14px;
+    border-radius: 8px;
+    font-weight: 700;
+    cursor: pointer;
+    border: none;
+    width: 100%;
+}
