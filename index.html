@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Srinath Goud | AI Resume Builder</title>
+    <title>Srinath Goud | Manual Resume Builder</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
@@ -10,55 +10,59 @@
 <body>
 
     <div class="editor-panel">
-        <h2 style="color: #3b82f6; margin-bottom: 1.5rem;">AUTO_BUILDER_v12</h2>
+        <h2 style="color: #3b82f6; margin-bottom: 1.5rem;">STATIC_BUILDER_v13</h2>
         
         <div class="input-group">
-            <label style="color: #facc15;">🔑 Gemini API Key</label>
-            <input type="password" id="apiKey" placeholder="Paste your key here">
-        </div>
-
-        <div class="input-group">
-            <label>Upload Previous Resume (PDF)</label>
+            <label>Import Previous Resume (PDF)</label>
             <input type="file" id="pdfInput" accept=".pdf" onchange="importResume(event)">
         </div>
 
         <hr style="border:0; border-top:1px solid #334155; margin-bottom:1.5rem;">
 
-        <div class="section-header-flex">
+        <div class="input-group">
+            <label>Full Name</label>
+            <input type="text" id="inName" value="Pulimamidi Srinath Goud" oninput="update()">
+        </div>
+
+        <div class="input-group">
             <label>Professional Summary</label>
-            <button class="ai-mini-btn" onclick="triggerAiPolish('inSummary', 'summary')">✨ AI POLISH</button>
+            <textarea id="inSummary" rows="3" oninput="update()"></textarea>
         </div>
-        <textarea id="inSummary" rows="3" oninput="update()"></textarea>
 
-        <div class="section-header-flex">
+        <div class="input-group">
             <label>Work Experience</label>
-            <button class="ai-mini-btn" onclick="triggerAiPolish('inExp', 'experience')">🚀 ATS OPTIMIZE</button>
+            <textarea id="inExp" rows="8" oninput="update()"></textarea>
         </div>
-        <textarea id="inExp" rows="8" oninput="update()"></textarea>
 
-        <label>Education</label>
-        <textarea id="inEdu" rows="3" oninput="update()"></textarea>
+        <div class="input-group">
+            <label>Education</label>
+            <textarea id="inEdu" rows="3" oninput="update()"></textarea>
+        </div>
 
-        <label>Technical Skills</label>
-        <input type="text" id="inSkills" oninput="update()">
+        <div class="input-group">
+            <label>Technical Skills</label>
+            <input type="text" id="inSkills" oninput="update()">
+        </div>
 
-        <label>Certifications</label>
-        <textarea id="inCerts" rows="3" oninput="update()"></textarea>
+        <div class="input-group">
+            <label>Certifications</label>
+            <textarea id="inCerts" rows="3" oninput="update()"></textarea>
+        </div>
 
         <button onclick="downloadPDF()" class="download-btn">Download Final PDF</button>
     </div>
 
     <div class="preview-panel">
         <div id="resume-template">
-            <h1 class="resume-name">Pulimamidi Srinath Goud</h1>
+            <h1 class="resume-name" id="outName">Srinath Goud</h1>
             <div class="resume-contact">
                 (209)-279-6825 | pulimamidisrinath123@gmail.com | linkedin.com/in/Srinath Goud
             </div>
 
-            <div class="section-title">Professional Summary</div>
+            <div class="section-title">Summary</div>
             <p id="outSummary" class="resume-text"></p>
 
-            <div class="section-title">Work Experience</div>
+            <div class="section-title">Professional Experience</div>
             <p id="outExp" class="resume-text" style="white-space: pre-line;"></p>
 
             <div class="section-title">Education</div>
@@ -72,13 +76,12 @@
         </div>
     </div>
 
-    <script type="module">
-        import { GoogleGenerativeAI } from "https://esm.run/@google/generative-ai";
-
+    <script>
+        // PDF.js worker setup
         pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
-        // --- IMPORT LOGIC ---
-        window.importResume = async function(event) {
+        // 1. Static Import Logic (No API Required)
+        async function importResume(event) {
             const file = event.target.files[0];
             const reader = new FileReader();
             reader.onload = async function() {
@@ -91,7 +94,7 @@
                     text += content.items.map(s => s.str).join(" ");
                 }
                 
-                // Mapped data from Srinath's Profile
+                // Mapped data for Srinath Goud
                 document.getElementById('inSummary').value = "System Engineer with over two years of experience providing infrastructure support.";
                 document.getElementById('inExp').value = "• Optimized network performance and integrated Cisco routers.\n• Deployed Windows/Mac OS and managed server environments.";
                 document.getElementById('inEdu').value = "Master's, Computer Science - University Of The Pacific\nBachelor's, Computer Science - JPNCE";
@@ -103,42 +106,9 @@
             reader.readAsArrayBuffer(file);
         }
 
-        // --- AI LOGIC ---
-        window.triggerAiPolish = async function(fieldId, type) {
-            const apiKey = document.getElementById('apiKey').value;
-            if(!apiKey) return alert("Please enter your Gemini API Key at the top!");
-
-            const field = document.getElementById(fieldId);
-            const originalText = field.value;
-            const btn = event.target;
-
-            if(!originalText) return alert("Please enter text first!");
-
-            btn.innerText = "✨ THINKING...";
-            btn.disabled = true;
-
-            try {
-                const genAI = new GoogleGenerativeAI(apiKey);
-                const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-                
-                const prompt = type === 'experience' 
-                    ? `Act as an ATS expert. Rewrite this experience for a System Engineer using action verbs and metrics: "${originalText}"`
-                    : `Rewrite this resume summary for a CS Master's student to be professional: "${originalText}"`;
-
-                const result = await model.generateContent(prompt);
-                const response = await result.response;
-                field.value = response.text().trim().replace(/\*\*/g, '').replace(/\*/g, '•'); 
-                update();
-            } catch (error) {
-                console.error("Error:", error);
-                alert("API Connection Error: " + error.message);
-            } finally {
-                btn.innerText = type === 'experience' ? "🚀 ATS OPTIMIZE" : "✨ AI POLISH";
-                btn.disabled = false;
-            }
-        }
-
-        window.update = function() {
+        // 2. Real-time Preview Update
+        function update() {
+            document.getElementById('outName').innerText = document.getElementById('inName').value || "Srinath Goud";
             document.getElementById('outSummary').innerText = document.getElementById('inSummary').value;
             document.getElementById('outExp').innerText = document.getElementById('inExp').value;
             document.getElementById('outEdu').innerText = document.getElementById('inEdu').value;
@@ -146,7 +116,8 @@
             document.getElementById('outCerts').innerText = document.getElementById('inCerts').value;
         }
 
-        window.downloadPDF = function() {
+        // 3. PDF Export
+        function downloadPDF() {
             const element = document.getElementById('resume-template');
             element.style.transform = "scale(1)";
             html2pdf().from(element).set({
@@ -156,6 +127,8 @@
                 jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
             }).save().then(() => element.style.transform = "scale(0.75)");
         }
+        
+        // Initial run
         update();
     </script>
 </body>
