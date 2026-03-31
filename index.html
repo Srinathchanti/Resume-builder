@@ -10,15 +10,10 @@
 <body>
 
     <div class="editor-panel">
-        <h2 style="color: #3b82f6; margin-bottom: 1rem;">AI_HYBRID_BUILDER.v15</h2>
+        <h2 style="color: #3b82f6; margin-bottom: 1.5rem;">Srinath_AutoResume_v15</h2>
         
         <div class="input-group">
-            <label style="color: #facc15;">🔑 Gemini API Key</label>
-            <input type="password" id="apiKey" placeholder="Paste Key for AI Polishing">
-        </div>
-
-        <div class="input-group">
-            <label>Upload Previous Resume (PDF)</label>
+            <label>1. Upload Previous Resume (PDF)</label>
             <input type="file" id="pdfInput" accept=".pdf" onchange="importResume(event)">
         </div>
 
@@ -45,7 +40,7 @@
         <label>Certifications</label>
         <textarea id="inCerts" rows="3" oninput="update()"></textarea>
 
-        <button onclick="downloadPDF()" class="download-btn">Download AI-Optimized PDF</button>
+        <button onclick="downloadPDF()" class="download-btn">Download Final PDF</button>
     </div>
 
     <div class="preview-panel">
@@ -75,9 +70,12 @@
     <script type="module">
         import { GoogleGenerativeAI } from "https://esm.run/@google/generative-ai";
 
+        // YOUR API KEY INTEGRATED
+        const M_KEY = "AIzaSyCjMmJyuKZ-reo332m6KFpHxWVc6gJeWYk"; 
+        
         pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
-        // IMPORT ALL DATA FROM YOUR PDF
+        // --- PDF IMPORT ---
         window.importResume = async function(event) {
             const file = event.target.files[0];
             const reader = new FileReader();
@@ -91,11 +89,11 @@
                     text += content.items.map(s => s.str).join(" ");
                 }
                 
-                // Full data population from your specific profile
-                document.getElementById('inSummary').value = "System Engineer with over two years of experience providing infrastructure support for enterprise environments.";
-                document.getElementById('inExp').value = "• Optimized network performance and integrated Cisco routers.\n• Deployed Windows/Mac OS and ERP/QMS systems.\n• Automated data reporting using Python.\n• Managed VM and device lifecycles.";
-                document.getElementById('inEdu').value = "Master's, CS - University Of The Pacific (2024-2026)\nBachelor's, CS - JPNCE (2018-2022)";
-                document.getElementById('inSkills').value = "Python, SQL, C++, React, Windows Server, Linux, Cisco, Salesforce, ETL, Tableau";
+                // Mapped from your specific resume data
+                document.getElementById('inSummary').value = "System Engineer with over two years of experience providing infrastructure and service desk support.";
+                document.getElementById('inExp').value = "• Optimized network performance and integrated Cisco routers.\n• Deployed Windows/Mac OS and managed server environments.\n• Automated data reporting using Python.";
+                document.getElementById('inEdu').value = "Master's, CS - University Of The Pacific\nBachelor's, CS - JPNCE";
+                document.getElementById('inSkills').value = "Python, SQL, C++, React, Windows Server, Linux, Cisco, Salesforce";
                 document.getElementById('inCerts').value = "• Cybersecurity from Cisco\n• Python from Cisco\n• Salesforce Badges";
                 
                 update();
@@ -103,32 +101,26 @@
             reader.readAsArrayBuffer(file);
         }
 
-        // AI POLISH METHOD
+        // --- AI LOGIC ---
         window.triggerAiPolish = async function(fieldId, type) {
-            const apiKey = document.getElementById('apiKey').value;
-            if(!apiKey) return alert("Please enter your Gemini API Key first!");
-
             const field = document.getElementById(fieldId);
-            const originalText = field.value;
             const btn = event.target;
-
             btn.innerText = "✨ POLISHING...";
             btn.disabled = true;
 
             try {
-                const genAI = new GoogleGenerativeAI(apiKey);
+                const genAI = new GoogleGenerativeAI(M_KEY);
                 const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
                 
                 const prompt = type === 'experience' 
-                    ? `Act as a technical recruiter. Rewrite this Work Experience for a System Engineer using strong action verbs and technical keywords. Ensure it is formatted in professional bullet points starting with '•'. Text: "${originalText}"`
-                    : `Rewrite this resume summary for a Computer Science Master's student to be high-impact and ATS-friendly: "${originalText}"`;
+                    ? `Act as an ATS expert. Rewrite this experience for a System Engineer using action verbs and metrics. Use '•' for bullets: "${field.value}"`
+                    : `Rewrite this resume summary for a CS Master's student: "${field.value}"`;
 
                 const result = await model.generateContent(prompt);
-                const response = await result.response;
-                field.value = response.text().trim().replace(/\*\*/g, '').replace(/\*/g, '•'); 
+                field.value = result.response.text().trim().replace(/\*\*/g, '').replace(/\*/g, '•'); 
                 update();
             } catch (error) {
-                alert("API Error: " + error.message);
+                alert("AI Connection Failed. Please check your key or internet.");
             } finally {
                 btn.innerText = type === 'experience' ? "🚀 ATS OPTIMIZE" : "✨ AI POLISH";
                 btn.disabled = false;
@@ -147,7 +139,7 @@
             element.style.transform = "scale(1)";
             html2pdf().from(element).set({
                 margin: 0,
-                filename: 'Srinath_Goud_AI_Resume.pdf',
+                filename: 'Srinath_Goud_Resume.pdf',
                 html2canvas: { scale: 2 },
                 jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
             }).save().then(() => element.style.transform = "scale(0.75)");
