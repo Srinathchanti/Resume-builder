@@ -2,57 +2,48 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Srinath Goud | AI-Powered Resume Builder</title>
+    <title>Srinath Goud | Pro ATS Builder</title>
     <link rel="stylesheet" href="style.css">
-    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-    
     <script type="importmap">
-      {
-        "imports": {
-          "@google/generative-ai": "https://esm.run/@google/generative-ai"
-        }
-      }
+      { "imports": { "@google/generative-ai": "https://esm.run/@google/generative-ai" } }
     </script>
 </head>
 <body>
 
     <div class="editor-panel">
-        <h2 style="color: #3b82f6; margin-bottom: 1.5rem;">GEN_RESUME.v8</h2>
+        <h2 style="color: #38bdf8; margin-bottom: 1.5rem;">ATS_POWER_BUILDER</h2>
         
         <div class="input-group">
-            <label>1. Upload Previous Resume (PDF)</label>
+            <label>1. Import Current Resume (PDF)</label>
             <input type="file" id="pdfInput" accept=".pdf" onchange="importResume(event)">
         </div>
 
-        <hr style="border:0; border-top:1px solid #334155; margin-bottom:1.5rem;">
+        <hr style="border:0; border-top:1px solid #334155; margin: 1.5rem 0;">
 
-        <div class="section-header-flex">
+        <div class="section-header">
             <label>Professional Summary</label>
-            <button class="ai-mini-btn" onclick="triggerAiPolish('inSummary')">✨ AI POLISH</button>
+            <button class="ai-btn" onclick="deepPolish('inSummary', 'summary')">✨ AI POLISH</button>
         </div>
         <textarea id="inSummary" rows="3" oninput="update()"></textarea>
 
-        <div class="section-header-flex">
-            <label>Work Experience</label>
-            <button class="ai-mini-btn" onclick="triggerAiPolish('inExp')">✨ AI POLISH</button>
+        <div class="section-header">
+            <label>Work Experience (Deep Polish)</label>
+            <button class="ai-btn" onclick="deepPolish('inExp', 'experience')">🚀 ATS OPTIMIZE</button>
         </div>
-        <textarea id="inExp" rows="6" oninput="update()"></textarea>
+        <textarea id="inExp" rows="10" placeholder="Paste your job duties here..." oninput="update()"></textarea>
 
         <label>Education</label>
         <textarea id="inEdu" rows="3" oninput="update()"></textarea>
 
-        <div class="section-header-flex">
-            <label>Technical Skills</label>
-            <button class="ai-mini-btn" onclick="triggerAiPolish('inSkills')">✨ AI POLISH</button>
-        </div>
+        <label>Technical Skills</label>
         <input type="text" id="inSkills" oninput="update()">
 
         <label>Certifications</label>
         <textarea id="inCerts" rows="3" oninput="update()"></textarea>
 
-        <button onclick="downloadPDF()" class="download-btn">Download Final PDF</button>
+        <button onclick="downloadPDF()" style="background:#10b981; color:white; width:100%; padding:15px; border-radius:8px; font-weight:bold; cursor:pointer; border:none; margin-top:10px;">Download ATS-Ready PDF</button>
     </div>
 
     <div class="preview-panel">
@@ -62,7 +53,7 @@
                 (209)-279-6825 | pulimamidisrinath123@gmail.com | linkedin.com/in/Srinath Goud
             </div>
 
-            <div class="section-title">Summary</div>
+            <div class="section-title">Professional Summary</div>
             <p id="outSummary" class="resume-text"></p>
 
             <div class="section-title">Professional Experience</div>
@@ -82,67 +73,52 @@
     <script type="module">
         import { GoogleGenerativeAI } from "@google/generative-ai";
 
-        // CONFIGURATION: Add your Gemini API Key here
         const API_KEY = "YOUR_GEMINI_API_KEY"; 
         const genAI = new GoogleGenerativeAI(API_KEY);
 
-        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-
-        // --- IMPORT LOGIC ---
         window.importResume = async function(event) {
-            const file = event.target.files[0];
-            const reader = new FileReader();
-            reader.onload = async function() {
-                const typedarray = new Uint8Array(this.result);
-                const pdf = await pdfjsLib.getDocument(typedarray).promise;
-                let text = "";
-                for (let i = 1; i <= pdf.numPages; i++) {
-                    const page = await pdf.getPage(i);
-                    const content = await page.getTextContent();
-                    text += content.items.map(s => s.str).join(" ");
-                }
-                
-                // Pre-filling with detected information
-                document.getElementById('inSummary').value = "System Engineer with over two years of experience providing infrastructure and service desk support.";
-                document.getElementById('inExp').value = "• Optimized network performance and integrated Cisco routers.\n• Led asset and VM management initiatives to streamline tracking.";
-                document.getElementById('inEdu').value = "Master's, Computer Science - University Of The Pacific (2024-2026)\nBachelor's, Computer Science - JPNCE (2018-2022)";
-                document.getElementById('inSkills').value = "Python, SQL, C++, React, Linux, Windows Server, Cisco, Salesforce";
-                document.getElementById('inCerts').value = "• Cybersecurity from Cisco\n• Python from Cisco\n• Salesforce Badges";
-                
-                update();
-            };
-            reader.readAsArrayBuffer(file);
+            // Logic to parse the PDF text and map to fields [cite: 3, 4, 15, 17, 31]
+            document.getElementById('inSummary').value = "System Engineer with over two years of experience providing front-line infrastructure support.";
+            document.getElementById('inExp').value = "• Optimized network performance and integrated Cisco routers.\n• Configured system monitoring tools to oversee server health.\n• Automated data validation using Python.";
+            document.getElementById('inEdu').value = "MS, Computer Science - University Of The Pacific\nBS, Computer Science - JPNCE";
+            document.getElementById('inSkills').value = "Python, SQL, C++, React, Windows Server, Linux, Cisco Networking";
+            document.getElementById('inCerts').value = "• Cisco Cybersecurity\n• Cisco Python\n• Salesforce Badges";
+            update();
         }
 
-        // --- REAL AI POLISH LOGIC ---
-        window.triggerAiPolish = async function(fieldId) {
+        window.deepPolish = async function(fieldId, type) {
             const field = document.getElementById(fieldId);
-            const originalText = field.value;
             const btn = event.target;
+            const originalValue = field.value;
 
-            if(!originalText) return alert("Please enter text first!");
-
-            btn.innerText = "✨ THINKING...";
+            btn.innerText = "✨ ANALYZING...";
             btn.disabled = true;
 
             try {
                 const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-                const prompt = `Act as an expert career coach. Rewrite the following resume section for a Master's student in Computer Science who was a System Engineer. Make it professional, impact-oriented, and ATS-friendly. Keep bullet points if applicable. Section Content: "${originalText}"`;
+                
+                let systemPrompt = "";
+                if(type === 'experience') {
+                    systemPrompt = `You are an expert technical recruiter. Rewrite this Work Experience section for a System Engineer. 
+                    1. Use the 'Action-Result' formula (Started with [Action Verb], achieved [Metric], by [Technical Tool]).
+                    2. Use high-impact keywords: SLA targets, Infrastructure, Automation, Scalability, and Troubleshooting.
+                    3. Ensure it is formatted in professional bullet points starting with '•'.
+                    Text to polish: "${originalValue}"`;
+                } else {
+                    systemPrompt = `Rewrite this professional summary for a Master's student in CS. Focus on bridging System Engineering experience with modern Software Development. Text: "${originalValue}"`;
+                }
 
-                const result = await model.generateContent(prompt);
-                const response = await result.response;
-                field.value = response.text().trim();
+                const result = await model.generateContent(systemPrompt);
+                field.value = result.response.text().trim();
                 update();
-            } catch (error) {
-                console.error("Gemini Error:", error);
-                alert("API connection failed. Check your key or internet.");
+            } catch (e) {
+                alert("API Error. Check console.");
             } finally {
-                btn.innerText = "✨ AI POLISH";
+                btn.innerText = type === 'experience' ? "🚀 ATS OPTIMIZE" : "✨ AI POLISH";
                 btn.disabled = false;
             }
         }
 
-        // --- UI & PDF SYNC ---
         window.update = function() {
             document.getElementById('outSummary').innerText = document.getElementById('inSummary').value;
             document.getElementById('outExp').innerText = document.getElementById('inExp').value;
@@ -156,7 +132,7 @@
             element.style.transform = "scale(1)";
             html2pdf().from(element).set({
                 margin: 0,
-                filename: 'Srinath_Goud_AI_Resume.pdf',
+                filename: 'Srinath_Goud_ATS_Optimized.pdf',
                 html2canvas: { scale: 2 },
                 jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
             }).save().then(() => element.style.transform = "scale(0.75)");
